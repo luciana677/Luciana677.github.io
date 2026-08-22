@@ -50,3 +50,65 @@ function embedPowerBIDashboard() {
 
 // Initialize any additional components
 document.addEventListener('DOMContentLoaded', embedPowerBIDashboard);
+
+// =================================
+// CERTIFICATIONS CAROUSEL
+// =================================
+document.addEventListener('DOMContentLoaded', function () {
+
+    const certTrack = document.querySelector('.cert-track');
+    if (!certTrack) return; // certifications section not present, skip safely
+
+    const certCards = document.querySelectorAll('.cert-card');
+    const certPrev = document.querySelector('.cert-prev');
+    const certNext = document.querySelector('.cert-next');
+    const certDots = document.querySelectorAll('.cert-dot');
+
+    let certCurrentIndex = 0;
+
+    function certCardsPerView() {
+        return window.innerWidth >= 768 ? 2 : 1;
+    }
+
+    function certMaxIndex() {
+        return Math.max(certCards.length - certCardsPerView(), 0);
+    }
+
+    function certUpdateCarousel() {
+        const maxIndex = certMaxIndex();
+
+        if (certCurrentIndex > maxIndex) certCurrentIndex = maxIndex;
+        if (certCurrentIndex < 0) certCurrentIndex = 0;
+
+        const movementPercent = certCurrentIndex * (100 / certCardsPerView());
+        certTrack.style.transform = `translateX(-${movementPercent}%)`;
+
+        certDots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === certCurrentIndex);
+        });
+    }
+
+    certNext.addEventListener('click', function () {
+        const maxIndex = certMaxIndex();
+        certCurrentIndex = certCurrentIndex < maxIndex ? certCurrentIndex + 1 : 0;
+        certUpdateCarousel();
+    });
+
+    certPrev.addEventListener('click', function () {
+        const maxIndex = certMaxIndex();
+        certCurrentIndex = certCurrentIndex > 0 ? certCurrentIndex - 1 : maxIndex;
+        certUpdateCarousel();
+    });
+
+    certDots.forEach((dot, index) => {
+        dot.addEventListener('click', function () {
+            certCurrentIndex = index;
+            certUpdateCarousel();
+        });
+    });
+
+    window.addEventListener('resize', certUpdateCarousel);
+
+    certUpdateCarousel();
+});
+        
